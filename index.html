@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alatau: City of the Future — Analytical Longread</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0e0c;
+    --paper: #f5f0e8;
+    --accent: #c0392b;
+    --muted: #7a7060;
+    --rule: #d4c9b0;
+    --highlight: #e8dfc8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 300;
+    line-height: 1.8;
+  }
+
+  /* Language switcher */
+  .lang-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--ink);
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    border-bottom: 3px solid var(--accent);
+  }
+
+  .lang-btn {
+    padding: 12px 32px;
+    background: transparent;
+    border: none;
+    color: #888;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-right: 1px solid #222;
+  }
+
+  .lang-btn:last-child { border-right: none; }
+
+  .lang-btn.active {
+    color: var(--paper);
+    background: var(--accent);
+  }
+
+  .lang-btn:hover:not(.active) { color: var(--paper); }
+
+  /* Content panels */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Article layout */
+  .article {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 60px 32px 100px;
+  }
+
+  /* Header */
+  .kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .kicker::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.4;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    margin-bottom: 24px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .deck {
+    font-size: 19px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: #3a3530;
+    border-left: 3px solid var(--accent);
+    padding-left: 20px;
+    margin-bottom: 40px;
+  }
+
+  .byline {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 48px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--muted);
+  }
+
+  .byline-dot { color: var(--rule); }
+
+  /* Body text */
+  p {
+    font-size: 17px;
+    margin-bottom: 24px;
+    color: #1a1814;
+  }
+
+  p:first-of-type::first-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 68px;
+    font-weight: 900;
+    float: left;
+    line-height: 0.85;
+    margin: 4px 12px -4px 0;
+    color: var(--accent);
+  }
+
+  /* Section headers */
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    margin: 52px 0 20px;
+    padding-top: 52px;
+    border-top: 2px solid var(--ink);
+    line-height: 1.2;
+  }
+
+  h2 .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    display: block;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+
+  /* Pullquote */
+  blockquote {
+    margin: 40px -20px;
+    padding: 28px 28px 28px 32px;
+    background: var(--highlight);
+    border-left: 4px solid var(--accent);
+    font-family: 'Playfair Display', serif;
+    font-size: 21px;
+    font-style: italic;
+    line-height: 1.5;
+    color: #2a2520;
+  }
+
+  blockquote cite {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-style: normal;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+
+  /* Stat callout */
+  .stat-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin: 40px 0;
+  }
+
+  .stat {
+    background: var(--paper);
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* Divider */
+  .divider {
+    text-align: center;
+    margin: 40px 0;
+    color: var(--muted);
+    letter-spacing: 12px;
+    font-size: 10px;
+  }
+
+  /* Conclusion box */
+  .conclusion {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 36px 32px;
+    margin-top: 52px;
+  }
+
+  .conclusion h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #f0e8d8;
+  }
+
+  .conclusion p {
+    color: #c8c0b0;
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  .conclusion p:first-of-type::first-letter {
+    all: unset;
+    font-size: 15px;
+  }
+
+  /* Tags */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border: 1px solid var(--rule);
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* Portfolio note */
+  .portfolio-note {
+    background: #f0f0f0;
+    border: 1px dashed #bbb;
+    padding: 16px 20px;
+    margin: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: #666;
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .article { padding: 40px 20px 80px; }
+    blockquote { margin: 32px 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="portfolio-note">⚡ PORTFOLIO SAMPLE — Analytical Longread / Аналитический лонгрид</div>
+
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="switchLang('en')">🇬🇧 English</button>
+  <button class="lang-btn" onclick="switchLang('ru')">🇷🇺 Русский</button>
+</div>
+
+<!-- ===== ENGLISH ===== -->
+<div id="panel-en" class="panel active">
+<article class="article">
+
+  <div class="kicker">Analysis · Urban Tech · Kazakhstan</div>
+
+  <h1>Flying Into the <em>Unknown:</em> Can Alatau Become a Safe City of the Future?</h1>
+
+  <p class="deck">Kazakhstan has signed a constitutional law granting Alatau a special legal status — complete with air taxis, digital governance, and its own residency program. But behind the futuristic renderings lies a technology that no country on Earth has yet proven safe at scale.</p>
+
+  <div class="byline">
+    <span>Analytical Report</span>
+    <span class="byline-dot">·</span>
+    <span>Urban Mobility & Smart Cities</span>
+    <span class="byline-dot">·</span>
+    <span>2026</span>
+  </div>
+
+  <p>Somewhere above Alatau's gleaming towers, a drone-like vehicle carries a passenger across the city — no traffic jams, no exhaust fumes, no red lights. This is the vision Kazakhstan's government is betting on, backed by a constitutional law that grants the new district near Almaty a unique experimental legal status. The ambition is striking. The risks, however, are not being discussed loudly enough.</p>
+
+  <p>The project promises air taxis, a digital city management system, and a special "Alatau resident" status available to both individuals and legal entities. On paper, it reads like a Silicon Valley pitch deck transplanted into the Kazakh steppe. In practice, it raises questions that even the world's most technologically advanced nations have yet to answer.</p>
+
+  <h2><span class="num">01 · CONTEXT</span>The Promise: A Constitutional Bet on the Future</h2>
+
+  <p>The decision to create a "city of the future" in Alatau is not spontaneous. It fits a broader pattern of Central Asian states using special economic and legal zones to attract investment and signal modernization. Kazakhstan has done this before — with Astana's AIFC (Astana International Financial Centre), which operates under English common law. Alatau appears to be applying the same logic to urban technology.</p>
+
+  <p>The constitutional law creates a framework specifically designed to remove bureaucratic friction for emerging technologies. New buildings in the zone will reportedly be designed with air taxi infrastructure in mind from the outset. This is, in theory, exactly right: infrastructure-first planning is what separates ambitious pilots from workable systems.</p>
+
+  <blockquote>
+    "There are no paved roads in the sky — no lanes, no stop signs, no shoulders to pull over onto. The geometry of aerial mobility is still being invented."
+    <cite>— From public commentary on the Alatau project</cite>
+  </blockquote>
+
+  <h2><span class="num">02 · THE PROBLEM</span>An Unproven Technology at Civic Scale</h2>
+
+  <p>Here is what the press releases do not say: air taxi technology is, globally, still unproven at civilian scale. No country — not the United States, not China, not Germany — has yet deployed autonomous or semi-autonomous urban air mobility in a way that has been independently verified as safe for densely populated areas.</p>
+
+  <p>The control systems for air vehicles are currently trained predominantly on electric motor propulsion technology. But electric-only propulsion is unlikely to be the final architecture for mass-market air taxis. This creates a fundamental training problem: the AI models learning to navigate urban airspace today are learning on a technology platform that will likely be superseded. Think of it as teaching a generation of pilots on aircraft that will never enter commercial service.</p>
+
+  <div class="stat-box">
+    <div class="stat">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Countries with certified urban air taxi networks at scale</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Variables in 3D urban airspace vs. 2D road geometry</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">?</div>
+      <div class="stat-label">Minimum safe separation distance between aero-vehicles in city air</div>
+    </div>
+  </div>
+
+  <p>Unlike road vehicles, an air taxi that experiences a malfunction cannot simply pull over. Debris from a mid-air collision or mechanical failure falls — onto pedestrians, onto buildings, onto other vehicles. The risk radius of an aerial accident is fundamentally different from that of a road accident, where harm is largely contained to the road corridor.</p>
+
+  <h2><span class="num">03 · THE ANALOGY</span>The Steam Engine Problem</h2>
+
+  <p>History offers a useful frame. At the turn of the 20th century, the steam engine was the dominant propulsion technology. Inventors and entrepreneurs raced to apply it everywhere. Then the internal combustion engine arrived — and rewrote the rules entirely. The companies and systems built around steam had to adapt or disappear.</p>
+
+  <p>Today's air taxi pioneers face an analogous inflection point. The propulsion technology being used to train autonomous flight systems today will almost certainly not be the final technology. The question is not whether this transition will happen, but how much real-world operational data — and how many real-world incidents — will accumulate before it does.</p>
+
+  <blockquote>
+    "You can choose technologies and engine management methods that will provide a minimally minimal risk of flight operations. But making the collision percentage zero will not work."
+    <cite>— Public commenter, Holanewskz post</cite>
+  </blockquote>
+
+  <h2><span class="num">04 · THE NATURE ARGUMENT</span>What Birds and Insects Tell Us</h2>
+
+  <p>Nature provides the longest-running experiment in aerial collision avoidance. Birds and insects — with millions of years of evolutionary refinement — still collide in the air. Their collision rates are low enough to be biologically acceptable, but not zero. They achieve this through distributed, real-time sensory processing that our most advanced neural networks are only beginning to approximate.</p>
+
+  <p>The implication for Alatau is uncomfortable but necessary to state plainly: no matter how sophisticated the control systems become, a collision rate of exactly zero is not achievable. The realistic goal is minimization, not elimination. And minimization requires an enormous base of real-world trial data — data that, by definition, is produced through real-world incidents.</p>
+
+  <h2><span class="num">05 · THE QUESTION</span>Who Bears the Cost of the Experiment?</h2>
+
+  <p>This brings us to the sharpest edge of the Alatau proposal. Every major transportation technology — the automobile, the commercial aircraft, the railway — went through a period of deadly experimentation before safety standards emerged. The automobile killed people on unpaved roads before guardrails, traffic lights, and seatbelts existed. Aircraft crashed before pressurized cabins, instrument landing systems, and black boxes were invented.</p>
+
+  <p>In each case, the people who bore the cost of the learning curve were not only early adopters who chose to take the risk — they were bystanders. Pedestrians. People who happened to live near a road or a flight path.</p>
+
+  <p>Alatau's residents and the broader Almaty population will be the test population for technology that the world's most sophisticated engineering cultures have not yet certified as safe. This is not an argument against ambition. It is an argument for transparency about what "city of the future" actually means at this stage of technological development.</p>
+
+  <div class="divider">· · ·</div>
+
+  <h2><span class="num">06 · THE PATH FORWARD</span>What Would Responsible Innovation Look Like?</h2>
+
+  <p>None of this means the Alatau project should be abandoned. Urban air mobility will eventually arrive — the question is on what terms. Several principles could guide a more measured approach.</p>
+
+  <p>First, infrastructure planning should be technology-neutral. Designing buildings only for electric-propulsion air taxis risks locking in an architecture that becomes obsolete within a decade. Flexible vertiport designs that can accommodate multiple propulsion types are technically achievable and strategically wiser.</p>
+
+  <p>Second, operational corridors should be phased. Before air taxis fly over populated residential areas, extended trials over lower-density zones with full telemetry transparency would generate the real-world data that simulation cannot replace.</p>
+
+  <p>Third, independent safety research must precede commercialization. The question of which companies have conducted the research to confidently assert flight safety under neural-network control models deserves a public, peer-reviewed answer — not a marketing claim.</p>
+
+  <div class="conclusion">
+    <h3>Bottom Line</h3>
+    <p>Alatau's constitutional law is an act of genuine political courage. Building a city around technologies that do not yet fully exist requires exactly the kind of regulatory flexibility the law creates. But courage without candor is not leadership — it is a gamble made with other people's safety.</p>
+    <p>The honest version of the "city of the future" pitch acknowledges that what is being built is not a finished product but a laboratory. Laboratories produce breakthroughs. They also produce failures. The city that succeeds will be the one that designs for both.</p>
+  </div>
+
+  <div class="tags">
+    <span class="tag">Kazakhstan</span>
+    <span class="tag">Urban Air Mobility</span>
+    <span class="tag">Smart City</span>
+    <span class="tag">Alatau</span>
+    <span class="tag">Air Taxi</span>
+    <span class="tag">RegTech</span>
+    <span class="tag">Innovation Policy</span>
+  </div>
+
+</article>
+</div>
+
+<!-- ===== RUSSIAN ===== -->
+<div id="panel-ru" class="panel">
+<article class="article">
+
+  <div class="kicker">Аналитика · Городские технологии · Казахстан</div>
+
+  <h1>Полёт в <em>неизвестность:</em> может ли Алатау стать безопасным городом будущего?</h1>
+
+  <p class="deck">Казахстан подписал конституционный закон, присвоив Алатау особый правовой статус: аэротакси, цифровое управление, собственная программа резидентства. Но за футуристическими рендерами скрывается технология, которую ни одна страна мира ещё не доказала безопасной в городском масштабе.</p>
+
+  <div class="byline">
+    <span>Аналитический материал</span>
+    <span class="byline-dot">·</span>
+    <span>Городская мобильность и умные города</span>
+    <span class="byline-dot">·</span>
+    <span>2026</span>
+  </div>
+
+  <p>Где-то над сверкающими башнями Алатау дронообразный аппарат перевозит пассажира через город — без пробок, выхлопных газов и светофоров. Именно на этот образ делает ставку правительство Казахстана, закрепив его в конституционном законе об особом экспериментальном статусе нового района близ Алматы. Амбиции впечатляют. Но риски пока обсуждаются слишком тихо.</p>
+
+  <p>Проект обещает аэротакси, цифровую систему управления городом и специальный статус «резидента Алатау», доступный как физическим, так и юридическим лицам. На бумаге это выглядит как питч-дек из Кремниевой долины, перенесённый в казахстанскую степь. На практике он порождает вопросы, на которые не ответили даже самые технологически развитые государства мира.</p>
+
+  <h2><span class="num">01 · КОНТЕКСТ</span>Конституционная ставка на будущее</h2>
+
+  <p>Решение создать «город будущего» в Алатау не случайно. Оно вписывается в логику центральноазиатских государств, использующих особые экономические и правовые зоны для привлечения инвестиций и демонстрации курса на модернизацию. Казахстан уже применял этот подход — в случае с МФЦА в Астане, работающим по нормам английского общего права. Алатау, судя по всему, переносит ту же модель на сферу городских технологий.</p>
+
+  <p>Конституционный закон создаёт правовую среду, специально ориентированную на снятие бюрократических барьеров для новых технологий. По данным источников, новые здания в зоне будут проектироваться с учётом инфраструктуры для аэротакси с самого начала. В теории — это именно то, что нужно: планирование от инфраструктуры отличает амбициозные пилоты от реально работающих систем.</p>
+
+  <blockquote>
+    «В воздухе нет дорог — ни асфальтированных, ни просёлочных. Нет полос движения, нет знаков. Геометрия воздушной городской мобильности ещё только изобретается.»
+    <cite>— Из публичных комментариев к проекту Алатау</cite>
+  </blockquote>
+
+  <h2><span class="num">02 · ПРОБЛЕМА</span>Недоказанная технология в гражданском масштабе</h2>
+
+  <p>Вот чего нет в пресс-релизах: технология аэротакси в гражданском масштабе нигде в мире не доказала своей состоятельности. Ни США, ни Китай, ни Германия не внедрили автономную или полуавтономную городскую воздушную мобильность, безопасность которой для плотно застроенных территорий была бы независимо подтверждена.</p>
+
+  <p>Системы управления воздушными аппаратами сегодня обучаются преимущественно на технологии электромоторной тяги. Однако именно электрическая тяга вряд ли станет финальной архитектурой массового аэротакси. Это создаёт фундаментальную проблему обучения: ИИ-модели, осваивающие сегодня городское воздушное пространство, тренируются на технологической платформе, которую, по всей видимости, заменят. Это всё равно что обучать поколение пилотов на самолётах, которые никогда не выйдут в коммерческую эксплуатацию.</p>
+
+  <div class="stat-box">
+    <div class="stat">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Стран с сертифицированными городскими сетями аэротакси в масштабе</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Переменных в 3D городском воздушном пространстве против 2D дорожной геометрии</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">?</div>
+      <div class="stat-label">Минимальная безопасная дистанция между аэромобилями в городе</div>
+    </div>
+  </div>
+
+  <p>В отличие от наземного транспорта, аэротакси при неисправности не может просто съехать на обочину. Обломки при столкновении или отказе техники падают вниз — на пешеходов, на здания, на другие транспортные средства. Радиус поражения при воздушной аварии принципиально отличается от дорожного ДТП, ущерб от которого в основном ограничен дорожным коридором.</p>
+
+  <h2><span class="num">03 · АНАЛОГИЯ</span>Проблема парового двигателя</h2>
+
+  <p>История предлагает полезную точку отсчёта. На рубеже XX века паровой двигатель был господствующей движущей силой. Изобретатели и предприниматели наперебой применяли его везде. Затем появился двигатель внутреннего сгорания — и переписал все правила. Компании и системы, выстроенные вокруг пара, были вынуждены адаптироваться или исчезнуть.</p>
+
+  <p>Сегодняшние пионеры аэротакси стоят перед аналогичной точкой перелома. Технология движения, на которой сегодня обучаются автономные системы полётов, почти наверняка не станет финальной. Вопрос не в том, произойдёт ли этот переход, а в том, сколько реальных операционных данных — и сколько реальных инцидентов — накопится до этого момента.</p>
+
+  <blockquote>
+    «Можно выбрать технологии и методы управления двигателями, которые обеспечат максимально минимальный риск. Но сделать процент столкновений нулевым всё равно не удастся.»
+    <cite>— Комментатор под постом Holanewskz</cite>
+  </blockquote>
+
+  <h2><span class="num">04 · АРГУМЕНТ ПРИРОДЫ</span>Чему учат нас птицы и насекомые</h2>
+
+  <p>Природа проводит самый длительный эксперимент по предотвращению столкновений в воздухе. Птицы и насекомые — при миллионах лет эволюционной отточенности — всё равно иногда сталкиваются. Частота столкновений достаточно низка, чтобы быть биологически приемлемой, но не равна нулю. Они достигают этого благодаря распределённой сенсорной обработке в реальном времени, которую наши самые передовые нейросети лишь начинают приближённо воспроизводить.</p>
+
+  <p>Вывод для Алатау неудобен, но необходим: каким бы совершенным ни стало управление, нулевой процент столкновений недостижим. Реалистичная цель — минимизация, а не устранение. А минимизация требует огромной базы данных реальных испытаний — данных, которые по определению накапливаются через реальные инциденты.</p>
+
+  <h2><span class="num">05 · ВОПРОС</span>Кто оплачивает цену эксперимента?</h2>
+
+  <p>Здесь мы подходим к острейшей грани проекта Алатау. Каждая крупная транспортная технология — автомобиль, гражданская авиация, железная дорога — прошла через период смертоносного экспериментирования, прежде чем появились стандарты безопасности. Автомобиль убивал людей на грунтовых дорогах до появления отбойников, светофоров и ремней безопасности. Самолёты падали до изобретения герметичных кабин, систем слепой посадки и чёрных ящиков.</p>
+
+  <p>В каждом случае цену обучения платили не только те, кто сознательно принял риск. Её платили посторонние люди. Пешеходы. Те, кто просто жил рядом с дорогой или под воздушным коридором.</p>
+
+  <p>Жители Алатау и более широкой Алматинской агломерации станут тестовой аудиторией для технологии, которую самые развитые инженерные культуры мира ещё не сертифицировали как безопасную. Это не аргумент против амбиций. Это аргумент в пользу прозрачности относительно того, что «город будущего» реально означает на нынешнем этапе технологического развития.</p>
+
+  <div class="divider">· · ·</div>
+
+  <h2><span class="num">06 · ПУТЬ ВПЕРЁД</span>Как выглядела бы ответственная инновация?</h2>
+
+  <p>Всё это не означает, что проект Алатау нужно свернуть. Городская воздушная мобильность рано или поздно придёт — вопрос в условиях. Несколько принципов могли бы сделать подход более взвешенным.</p>
+
+  <p>Во-первых, инфраструктурное планирование должно быть технологически нейтральным. Проектирование зданий исключительно под аэротакси с электрическим двигателем рискует закрепить архитектуру, которая устареет за десятилетие. Гибкие конструкции вертипортов, способные принять несколько типов движения, технически достижимы и стратегически разумнее.</p>
+
+  <p>Во-вторых, операционные коридоры должны вводиться поэтапно. Прежде чем аэротакси полетят над жилыми кварталами, расширенные испытания над менее плотными зонами с полной телеметрической прозрачностью дадут данные реального мира, которые симуляция заменить не способна.</p>
+
+  <p>В-третьих, независимые исследования безопасности должны предшествовать коммерциализации. Вопрос о том, какие компании провели исследования, позволяющие уверенно утверждать о безопасности полётов под управлением нейросетевых моделей, заслуживает публичного, рецензируемого ответа — а не маркетингового заявления.</p>
+
+  <div class="conclusion">
+    <h3>Итог</h3>
+    <p>Конституционный закон об Алатау — акт подлинной политической смелости. Строить город вокруг технологий, которые ещё не существуют в полной мере, требует именно той регуляторной гибкости, которую создаёт этот закон. Но смелость без честности — это не лидерство, а ставка, сделанная чужой безопасностью.</p>
+    <p>Честная версия питча «города будущего» признаёт: то, что строится, — не готовый продукт, а лаборатория. Лаборатории дают прорывы. Они также дают сбои. Успешным станет город, который проектирует для обоих исходов.</p>
+  </div>
+
+  <div class="tags">
+    <span class="tag">Казахстан</span>
+    <span class="tag">Воздушная мобильность</span>
+    <span class="tag">Умный город</span>
+    <span class="tag">Алатау</span>
+    <span class="tag">Аэротакси</span>
+    <span class="tag">Инновационная политика</span>
+  </div>
+
+</article>
+</div>
+
+<script>
+function switchLang(lang) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + lang).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
